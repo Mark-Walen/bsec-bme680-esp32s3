@@ -25,7 +25,18 @@ char *get_version(void)
     return buffer;
 }
 
-static void mount_flash_partition(void){
+// static esp_err_t initialize_nvs(void)
+// {
+//     esp_err_t err = nvs_flash_init();
+//     if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+//         ESP_ERROR_CHECK( nvs_flash_erase() );
+//         err = nvs_flash_init();
+//     }
+//     ESP_ERROR_CHECK(err);
+//     return err;
+// }
+
+static esp_err_t mount_flash_partition(void){
     const esp_vfs_fat_mount_config_t mount_config = {
         .max_files = 4,
         .format_if_mount_failed = true,
@@ -34,9 +45,10 @@ static void mount_flash_partition(void){
     esp_err_t err = esp_vfs_fat_spiflash_mount_rw_wl("/bme680", "storage", &mount_config, &wlHandle);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Mount FatFS Failed. Mount name error: %s", esp_err_to_name(err));
-        return;
+        return err;
     }
     ESP_LOGI(TAG, "Mount Success");
+    return ESP_OK;
 }
 
 /*
@@ -184,7 +196,14 @@ uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
 
 void task_bme680_func(void *pvParameters)
 {
-    mount_flash_partition();
+    if (mount_flash_partition() != ESP_OK)
+    {
+        while (1)
+        {
+            vTaskDelay(pdMS_TO_TICKS(500));
+        }
+    }
+    
     printf("bsec lib ver%s\n", get_version());
     return_values_init ret;
     bme68x_t bme680_dev = *(bme68x_t *) pvParameters;
@@ -211,7 +230,7 @@ void task_bme680_func(void *pvParameters)
     if (ret.bme68x_status)
     {
         /* Could not intialize BME68x */
-        printf("Could not intialize BME68x,ret.bme68x_status=%d\r\n", ret.bme68x_status);
+        printf("Could not intialize BME68x, ret.bme68x_status=%d\r\n", ret.bme68x_status);
         while(1){
             vTaskDelay(pdMS_TO_TICKS(500));
         }
