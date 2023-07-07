@@ -1,6 +1,7 @@
 #ifndef __ESP32_S3_DRIVER_H__
 #define __ESP32_S3_DRIVER_H__
 
+#include "esp_timer.h"
 #include "driver/spi_master.h"
 #include "driver/gpio.h"
 #include "w25qxx/w25qxx.h"
@@ -21,7 +22,7 @@
 #define ADXL362_NSS_PIN             GPIO_NUM_15
 #define ADXL362_INT2_PIN            GPIO_NUM_9
 
-uint32_t get_timestamp(void);
+DEVICE_TICK_COUNT_TYPE get_timestamp(void);
 void delay_ms(uint32_t period);
 int spi_write(const uint8_t *tx_buffer, uint32_t len, void *fd);
 int spi_read(uint8_t *rx_buffer, uint32_t len, void *fd);

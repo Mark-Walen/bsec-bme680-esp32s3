@@ -7,9 +7,9 @@
 //but less overhead for setting up / finishing transfers. Make sure 240 is dividable by this.
 #define PARALLEL_LINES 16
 
-uint32_t get_timestamp(void)
+DEVICE_TICK_COUNT_TYPE get_timestamp(void)
 {
-    return pdMS_TO_TICKS(xTaskGetTickCount());
+    return esp_timer_get_time();
 }
 
 void delay_ms(uint32_t period)

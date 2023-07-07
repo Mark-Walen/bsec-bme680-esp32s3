@@ -5,13 +5,13 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "esp32_s3_driver.h"
-#include <string.h>
 
 void app_main(void)
 {
@@ -42,7 +42,8 @@ void app_main(void)
 
     spi_device_handle_t spi;
     device_t dev;
-    w25qxx_handle_t w25q16;
+    adxl362_t adxl362;
+    // w25qxx_handle_t w25q16;
     // adxl362_t adxl362;
     device_gpio_typedef_t w25q16_nss = {
         .pin = ADXL362_NSS_PIN,
@@ -51,10 +52,11 @@ void app_main(void)
     spi_init(&spi);
     
     device_init(&dev, spi_read, spi_write, delay_ms, printf, get_timestamp, &w25q16_nss, &spi);
-    w25qxx_init(&w25q16, &dev, gpio_setPin, gpio_resetPin);
+    // w25qxx_init(&w25q16, &dev, gpio_setPin, gpio_resetPin);
+    adxl362_init(&adxl362, &dev, gpio_setPin, gpio_resetPin);
 
-    w25qxx_read_id(&w25q16);
-    printf("0x%.4x\r\n", w25q16.dev->chip_id);    
+    adxl362_get_id(&adxl362);
+    printf("0x%.4x\r\n", adxl362.dev->chip_id);    
 
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(500));

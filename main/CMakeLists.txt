@@ -9,3 +9,5 @@ idf_component_register(SRCS
                         "D:/git/ic-drivers/device/")
 
 target_compile_options(${COMPONENT_LIB} PRIVATE "-Wno-format")
+
+add_compile_definitions(DEVICE_TICK_COUNT_TYPE=int64_t)
