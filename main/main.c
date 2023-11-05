@@ -12,11 +12,14 @@
 #include "esp_chip_info.h"
 #include "esp_flash.h"
 #include "esp32_s3_driver.h"
+#include "task_adxl362.h"
+#include "task_adxl345.h"
+#include "esp_log.h"
+
+static const char *main_tag = "main";
 
 void app_main(void)
 {
-    printf("Hello world!\n");
-
     /* Print chip information */
     esp_chip_info_t chip_info;
     uint32_t flash_size;
@@ -40,24 +43,19 @@ void app_main(void)
 
     printf("Minimum free heap size: %d bytes\n", esp_get_minimum_free_heap_size());
 
-    spi_device_handle_t spi;
-    device_t dev;
-    adxl362_t adxl362;
-    // w25qxx_handle_t w25q16;
-    // adxl362_t adxl362;
-    device_gpio_typedef_t w25q16_nss = {
-        .pin = ADXL362_NSS_PIN,
-        .port = NULL
-    };
-    spi_init(&spi);
+
+    adxl345_t adxl345;
+    uint8_t adxl345_addr = ADXL345_ADDRESS;
+    i2c_port_t adxl345_port = I2C_MASTER_NUM;
+    device_t i2c_dev;
+
+    gpio_init();
+    platform_init("esp32s3", get_timestamp, delay_ms, printf);
+    i2c_master_init(adxl345_port);
+    device_init(&i2c_dev, i2c_master_receive, i2c_master_transmit, &adxl345_port, &adxl345_addr);
+    adxl345_interface_init(&adxl345, &i2c_dev);
     
-    device_init(&dev, spi_read, spi_write, delay_ms, printf, get_timestamp, &w25q16_nss, &spi);
-    // w25qxx_init(&w25q16, &dev, gpio_setPin, gpio_resetPin);
-    adxl362_init(&adxl362, &dev, gpio_setPin, gpio_resetPin);
-
-    adxl362_get_id(&adxl362);
-    printf("0x%.4x\r\n", adxl362.dev->chip_id);    
-
+    create_task_adxl345(&adxl345);
     while(1) {
         vTaskDelay(pdMS_TO_TICKS(500));
     }
