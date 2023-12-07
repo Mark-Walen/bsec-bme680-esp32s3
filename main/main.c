@@ -11,12 +11,15 @@
 #include "freertos/task.h"
 #include "esp_chip_info.h"
 #include "esp_flash.h"
-#include "esp32_s3_driver.h"
-#include "task_adxl362.h"
-#include "task_adxl345.h"
 #include "esp_log.h"
+#include "esp32_s3_driver.h"
+#include "bme68x/bme68x.h"
+#include "task_bme680.h"
 
-static const char *main_tag = "main";
+#define TAG "main"
+
+static bme68x_t bme680_dev;
+static device_t i2c_dev;
 
 void app_main(void)
 {
@@ -43,20 +46,20 @@ void app_main(void)
 
     printf("Minimum free heap size: %d bytes\n", esp_get_minimum_free_heap_size());
 
+    uint8_t bme680_addr = BME68X_I2C_ADDR_LOW;
+    i2c_port_t bme680_i2c_port = I2C_MASTER_NUM;
+    memset(&bme680_dev, 0, sizeof(bme68x_t));
+    memset(&i2c_dev, 0, sizeof(i2c_dev));
 
-    adxl345_t adxl345;
-    uint8_t adxl345_addr = ADXL345_ADDRESS;
-    i2c_port_t adxl345_port = I2C_MASTER_NUM;
-    device_t i2c_dev;
-
-    gpio_init();
     platform_init("esp32s3", get_timestamp, delay_ms, printf);
-    i2c_master_init(adxl345_port);
-    device_init(&i2c_dev, i2c_master_receive, i2c_master_transmit, &adxl345_port, &adxl345_addr);
-    adxl345_interface_init(&adxl345, &i2c_dev);
-    
-    create_task_adxl345(&adxl345);
-    while(1) {
+    i2c_master_init(bme680_i2c_port);
+    device_init(&i2c_dev, i2c_master_receive, i2c_master_transmit, &bme680_i2c_port, &bme680_addr);
+    bme68x_interface_init(&bme680_dev, &i2c_dev, I2C);
+
+    create_task_bme680(&bme680_dev);
+
+    while(1){
+
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
