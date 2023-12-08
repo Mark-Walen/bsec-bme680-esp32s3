@@ -1,0 +1,3 @@
+[submodule "ic-drivers"]
+	path = ic-drivers
+	url = git@github.com:Mark-Walen/ic-drivers.git

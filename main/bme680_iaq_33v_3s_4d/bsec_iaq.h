@@ -1,4 +1,6 @@
 #include <stdint.h>
 
-extern const uint8_t bsec_config_iaq[1974];
+#define BSEC_CONFIG_LEN 1974
+
+extern const uint8_t bsec_config_iaq[BSEC_CONFIG_LEN];
 

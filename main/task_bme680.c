@@ -4,10 +4,16 @@
 #include "basic.h"
 #include "bsec_integration.h"
 #include "bme68x/bme68x.h"
+#include "bsec_iaq.h"
+#include "esp_vfs.h"
+#include "esp_vfs_fat.h"
+#include "esp_system.h"
 
 #define TAG "BME680"
 
-TaskHandle_t *task_bme680_handle = NULL;
+static TaskHandle_t *task_bme680_handle = NULL;
+static wl_handle_t wlHandle = WL_INVALID_HANDLE;
+static char *filename_state = "/bme680/bsec_iaq.state";
 
 char *get_version(void)
 {
@@ -17,6 +23,20 @@ char *get_version(void)
     snprintf(buffer, 16, "%d.%d.%d.%d", bsec_version.major, bsec_version.minor,
              bsec_version.major_bugfix, bsec_version.minor_bugfix);
     return buffer;
+}
+
+static void mount_flash_partition(void){
+    const esp_vfs_fat_mount_config_t mount_config = {
+        .max_files = 4,
+        .format_if_mount_failed = true,
+        .allocation_unit_size = CONFIG_WL_SECTOR_SIZE
+    };
+    esp_err_t err = esp_vfs_fat_spiflash_mount_rw_wl("/bme680", "storage", &mount_config, &wlHandle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Mount FatFS Failed. Mount name error: %s", esp_err_to_name(err));
+        return;
+    }
+    ESP_LOGI(TAG, "Mount Success");
 }
 
 /*
@@ -51,6 +71,58 @@ void output_ready(int64_t timestamp, float iaq, uint8_t iaq_accuracy, float stat
 }
 
 /*!
+ * @brief Load binary file from non-volatile memory into buffer. Utility function
+ *
+ * @param[in,out]   state_buffer    buffer to hold the loaded data
+ * @param[in]       n_buffer        size of the allocated buffer
+ * @param[in]       filename        name of the file on the NVM
+ * @param[in]       offset          offset in bytes from where to start copying
+ *                                  to buffer
+ * @return          number of bytes copied to buffer or zero on failure
+ */
+static uint32_t binary_load(uint8_t *b_buffer, uint32_t n_buffer,
+                            char *filename, uint32_t offset)
+{
+    int32_t copied_bytes = 0;
+    int8_t rslt = 0;
+
+    FILINFO fileinfo;
+    rslt = f_stat(filename, &fileinfo);
+    if (rslt != 0)
+    {
+        perror("stating binary file");
+        return 0;
+    }
+
+    uint32_t filesize = fileinfo.fsize - offset;
+
+    if (filesize > n_buffer)
+    {
+        fprintf(stderr, "%s: %d > %d\n", "binary data bigger than buffer", filesize,
+                n_buffer);
+        return 0;
+    }
+    else
+    {
+        FILE *file_ptr;
+        file_ptr = fopen(filename, "rb");
+        if (!file_ptr)
+        {
+            perror("fopen");
+            return 0;
+        }
+        fseek(file_ptr, offset, SEEK_SET);
+        copied_bytes = fread(b_buffer, sizeof(char), filesize, file_ptr);
+        if (copied_bytes == 0)
+        {
+            fprintf(stderr, "%s\n", "binary_load");
+        }
+        fclose(file_ptr);
+        return copied_bytes;
+    }
+}
+
+/*!
  * @brief           Load previous library state from non-volatile memory
  *
  * @param[in,out]   state_buffer    buffer to hold the loaded state string
@@ -66,7 +138,8 @@ uint32_t state_load(uint8_t *state_buffer, uint32_t n_buffer)
     // Return zero if loading was unsuccessful or no state was available, 
     // otherwise return length of loaded state string.
     // ...
-    return 0;
+    // int32_t rslt = 0;
+    return binary_load(state_buffer, n_buffer, filename_state, 0);
 }
 
 /*!
@@ -82,6 +155,10 @@ void state_save(const uint8_t *state_buffer, uint32_t length)
     // ...
     // Save the string some form of non-volatile memory, if possible.
     // ...
+    FILE *state_w_ptr;
+    state_w_ptr = fopen(filename_state, "wb");
+    fwrite(state_buffer, length, 1, state_w_ptr);
+    fclose(state_w_ptr);
 }
  
 /*!
@@ -100,11 +177,14 @@ uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
     // Return zero if loading was unsuccessful or no config was available, 
     // otherwise return length of loaded config string.
     // ...
-    return 0;
+    // int32_t rslt = 0;
+    memcpy(config_buffer, bsec_config_iaq, BSEC_CONFIG_LEN);
+    return BSEC_CONFIG_LEN;
 }
 
 void task_bme680_func(void *pvParameters)
 {
+    mount_flash_partition();
     printf("bsec lib ver%s\n", get_version());
     return_values_init ret;
     bme68x_t bme680_dev = *(bme68x_t *) pvParameters;
