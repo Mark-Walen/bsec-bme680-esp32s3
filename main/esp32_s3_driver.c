@@ -8,9 +8,6 @@
 #define PARALLEL_LINES          16
 #define ESP_INTR_FLAG_DEFAULT   0
 
-static void int1_isr_func(void *arg);
-static void int2_isr_func(void *arg);
-
 volatile uint8_t adxl345_int_flag;
 
 static __inline void delay_clock(uint32_t ts)
