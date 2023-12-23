@@ -101,10 +101,5 @@ int i2c_master_receive(uint8_t *rx_buffer, uint32_t len, void *fd, void *addr) {
     i2c_port_t i2c_port = *(i2c_port_t *) fd;
     uint8_t device_address = *(uint8_t *) addr;
 
-    if (i2c_master_read_from_device(i2c_port, device_address, rx_buffer, len, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS) == ESP_FAIL)
-    {
-        return DEVICE_E_COM_FAIL;
-    }
-    
-    return DEVICE_OK;
+    return i2c_master_read_from_device(i2c_port, device_address, rx_buffer, len, I2C_MASTER_TIMEOUT_MS / portTICK_PERIOD_MS);
 }
