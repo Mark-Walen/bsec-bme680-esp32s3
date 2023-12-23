@@ -5,12 +5,16 @@
  */
 
 #include <stdio.h>
+<<<<<<< HEAD
 #include <string.h>
+=======
+>>>>>>> 501c018 (feat: spi test passed.)
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_chip_info.h"
 #include "esp_flash.h"
+<<<<<<< HEAD
 #include "esp_log.h"
 #include "esp32_s3_driver.h"
 #include "bme68x/bme68x.h"
@@ -23,6 +27,15 @@ static device_t i2c_dev;
 
 void app_main(void)
 {
+=======
+#include "esp32_s3_driver.h"
+#include <string.h>
+
+void app_main(void)
+{
+    printf("Hello world!\n");
+
+>>>>>>> 501c018 (feat: spi test passed.)
     /* Print chip information */
     esp_chip_info_t chip_info;
     uint32_t flash_size;
@@ -46,6 +59,7 @@ void app_main(void)
 
     printf("Minimum free heap size: %d bytes\n", esp_get_minimum_free_heap_size());
 
+<<<<<<< HEAD
     uint8_t bme680_addr = BME68X_I2C_ADDR_LOW;
     i2c_port_t bme680_i2c_port = I2C_MASTER_NUM;
     memset(&bme680_dev, 0, sizeof(bme68x_t));
@@ -60,6 +74,25 @@ void app_main(void)
 
     while(1){
 
+=======
+    spi_device_handle_t spi;
+    device_t dev;
+    w25qxx_handle_t w25q16;
+    // adxl362_t adxl362;
+    device_gpio_typedef_t w25q16_nss = {
+        .pin = ADXL362_NSS_PIN,
+        .port = NULL
+    };
+    spi_init(&spi);
+    
+    device_init(&dev, spi_read, spi_write, delay_ms, printf, get_timestamp, &w25q16_nss, &spi);
+    w25qxx_init(&w25q16, &dev, gpio_setPin, gpio_resetPin);
+
+    w25qxx_read_id(&w25q16);
+    printf("0x%.4x\r\n", w25q16.dev->chip_id);    
+
+    while(1) {
+>>>>>>> 501c018 (feat: spi test passed.)
         vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
