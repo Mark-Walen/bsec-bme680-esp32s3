@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/spi_tester")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/bsec_bme680")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("D:/git/esp32-s3/spi_tester/build/esp-idf/esp_hw_support/port/esp32s3/cmake_install.cmake")
+  include("D:/git/esp32-s3/bsec-bme680-esp32/build/esp-idf/esp_hw_support/port/esp32s3/cmake_install.cmake")
 endif()
 

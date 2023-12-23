@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("D:/git/esp32-s3/spi_tester/build/bootloader/esp-idf/soc/esp32s3/cmake_install.cmake")
+  include("D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader/esp-idf/soc/esp32s3/cmake_install.cmake")
 endif()
 

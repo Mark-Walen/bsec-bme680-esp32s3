@@ -1,8 +1,8 @@
-# Install script for directory: D:/git/esp32-s3/spi_tester/main
+# Install script for directory: D:/git/esp32-s3/bsec-bme680-esp32/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/spi_tester")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/bsec_bme680")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 

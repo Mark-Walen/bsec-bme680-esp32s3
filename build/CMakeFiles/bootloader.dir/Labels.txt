@@ -1,13 +1,13 @@
 # Target labels
  bootloader
 # Source files and their labels
-D:/git/esp32-s3/spi_tester/build/CMakeFiles/bootloader
-D:/git/esp32-s3/spi_tester/build/CMakeFiles/bootloader.rule
-D:/git/esp32-s3/spi_tester/build/CMakeFiles/bootloader-complete.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
-D:/git/esp32-s3/spi_tester/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/CMakeFiles/bootloader
+D:/git/esp32-s3/bsec-bme680-esp32/build/CMakeFiles/bootloader.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/CMakeFiles/bootloader-complete.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+D:/git/esp32-s3/bsec-bme680-esp32/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

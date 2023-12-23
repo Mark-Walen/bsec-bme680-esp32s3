@@ -79,6 +79,7 @@
 #include <stdint.h>
 
 #include <string.h>
+#include <inttypes.h>
 #include "bsec_integration.h"
 #include "../esp32_s3_driver.h"
 /**********************************************************************************************************************/
@@ -196,14 +197,14 @@ return_values_init bsec_iot_init(bsec_virtual_sensor_t sensor_list[], uint8_t n_
     /* Load previous library state, if available */
     bsec_state_len = state_load(bsec_state, sizeof(bsec_state));
     if (bsec_state_len != 0)
-    {       
-        ret.bsec_status = bsec_set_state(bsec_state, bsec_state_len, work_buffer, sizeof(work_buffer));     
+    {
+        ret.bsec_status = bsec_set_state(bsec_state, bsec_state_len, work_buffer, sizeof(work_buffer));
         if (ret.bsec_status != BSEC_OK)
         {
             return ret;
         }
     }
-    // printf("%s:%d\n", __FUNCTION__, __LINE__);
+
     /* Call to the function which sets the library with subscription information */
     ret.bsec_status = bme68x_bsec_update_subscription(sensor_list, n_sensors, sample_rate);
     if (ret.bsec_status != BSEC_OK)
@@ -577,9 +578,11 @@ void bsec_iot_loop(sleep_fct sleep_n, get_timestamp_us_fct get_timestamp_us, out
     {
     	tick_before = get_timestamp();
         /* get the timestamp in nanoseconds before calling bsec_sensor_control() */
+        // time_stamp = get_timestamp_us() * 1000;
         time_stamp = get_timestamp_us() * 1000;
 		if (time_stamp >= sensor_settings.next_call)
 		{
+            printf("time stamp: %" PRId64 " next call: %" PRId64 "\r\n", time_stamp, sensor_settings.next_call);
 			/* Retrieve sensor settings to be used in this time instant by calling bsec_sensor_control */
 			bsec_status = bsec_sensor_control(time_stamp, &sensor_settings);
 			if (bsec_status != BSEC_OK)

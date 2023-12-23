@@ -1,4 +1,4 @@
-/* * Data converted from D:/git/esp32-s3/spi_tester/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from D:/git/esp32-s3/bsec-bme680-esp32/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded
