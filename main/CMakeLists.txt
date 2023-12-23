@@ -1,7 +1,6 @@
 idf_component_register(SRCS
                         "main.c"
                         "esp32_s3_driver.c"
-<<<<<<< HEAD
                         "task_bme680.c"
                         "D:/git/ic-drivers/platform/platform.c"
                         "D:/git/ic-drivers/device/device.c"
@@ -31,13 +30,3 @@ target_link_libraries(${COMPONENT_LIB} INTERFACE ${LIBS})
 set_property(TARGET ${LIBS} APPEND PROPERTY INTERFACE_LINK_LIBRARIES ${COMPONENT_LIB})
 
 set(COMPONENT_REQUIRES fatfs vfs)
-=======
-                        "D:/git/ic-drivers/device/device.c"
-                        "D:/git/ic-drivers/w25qxx/w25qxx.c"
-                        "D:/git/ic-drivers/adxl362/adxl362.c"
-                       INCLUDE_DIRS
-                        "D:/git/ic-drivers/"
-                        "D:/git/ic-drivers/device/")
-
-target_compile_options(${COMPONENT_LIB} PRIVATE "-Wno-format")
->>>>>>> 501c018 (feat: spi test passed.)
