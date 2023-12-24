@@ -2,6 +2,7 @@ idf_component_register(SRCS
                         "main.c"
                         "esp32_s3_driver.c"
                         "task_bme680.c"
+                        "task_mqtt.c"
                         "net_interface.c"
                         "D:/git/ic-drivers/platform/platform.c"
                         "D:/git/ic-drivers/device/device.c"

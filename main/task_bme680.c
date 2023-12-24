@@ -1,18 +1,25 @@
-#include "task_bme680.h"
-#include "esp32_s3_driver.h"
+#include "esp_vfs.h"
+#include "esp_vfs_fat.h"
+#include "esp_system.h"
+#include "esp_mac.h"
 #include "esp_log.h"
+
 #include "basic.h"
 #include "bsec_integration.h"
 #include "bme68x/bme68x.h"
 #include "bsec_iaq.h"
-#include "esp_vfs.h"
-#include "esp_vfs_fat.h"
-#include "esp_system.h"
 
+#include "esp32_s3_driver.h"
+#include "task_bme680.h"
+#include "task_mqtt.h"
+
+#define PAYLOAD_SIZE            35
+#define PAYLOAD_START_IDX       6
 #define TAG "BME680"
 
 static TaskHandle_t *task_bme680_handle = NULL;
 static char *filename_state = "/bme680/bsec_iaq.state";
+static uint8_t payload[PAYLOAD_SIZE];
 
 char *get_version(void)
 {
@@ -53,6 +60,58 @@ void output_ready(int64_t timestamp, float iaq, uint8_t iaq_accuracy, float stat
     printf(", \"Raw Gas\": \"%.0f\", \"Gas Percentage\":\"%.2f\"", raw_gas, gas_percentage);
     printf(", \"Stabilization status\": %.0f,\"Run in status\": %.0f,\"Status\": \"%d\"", stabilization_status, run_in_status, bsec_status);
     printf(", \"timestamp\": \"%" PRId64 "\"}\r\n", timestamp_s);
+}
+
+void output_ready_pusblish(int64_t timestamp, float iaq, uint8_t iaq_accuracy, float static_iaq, float co2_equivalent, float breath_voc_equivalent,
+                  float raw_pressure, float raw_temp, float temp, float raw_humidity, float humidity, float raw_gas, float gas_percentage,
+                  float stabilization_status, float run_in_status, bsec_library_return_t bsec_status)
+{
+    uint16_t uiaq = iaq * 100;
+    uint16_t siaq = static_iaq * 100;
+    uint32_t co2 = co2_equivalent * 100;
+    uint8_t voc = breath_voc_equivalent * 100;
+    uint16_t temperature = temp * 100;
+    uint16_t hum = humidity * 100;
+    uint32_t pressure = raw_pressure;
+    uint8_t payload_idx = PAYLOAD_START_IDX;
+    uint8_t data_len = PAYLOAD_SIZE - PAYLOAD_START_IDX;
+    
+    memset(payload + payload_idx, 0, data_len);
+    payload[payload_idx] = data_len;
+    
+    payload[payload_idx++] = (timestamp >> 56) & 0xFF;
+    payload[payload_idx++] = (timestamp >> 48) & 0xFF;
+    payload[payload_idx++] = (timestamp >> 40) & 0xFF;
+    payload[payload_idx++] = (timestamp >> 32) & 0xFF;
+    payload[payload_idx++] = (timestamp >> 24) & 0xFF;
+    payload[payload_idx++] = (timestamp >> 16) & 0xFF;
+    payload[payload_idx++] = (timestamp >> 8) & 0xFF;
+    payload[payload_idx++] = timestamp & 0xFF;
+
+    payload[payload_idx++] = iaq_accuracy;
+    payload[payload_idx++] = (uiaq >> 8) & 0xFF;
+    payload[payload_idx++] = uiaq & 0xFF;
+    payload[payload_idx++] = (siaq >> 8) & 0xFF;
+    payload[payload_idx++] = siaq & 0xFF;
+
+    payload[payload_idx++] = (co2 >> 24) & 0xFF;
+    payload[payload_idx++] = (co2 >> 16) & 0xFF;
+    payload[payload_idx++] = (co2 >> 8) & 0xFF;
+    payload[payload_idx++] = co2 & 0xFF;
+    payload[payload_idx++] = voc;
+
+    payload[payload_idx++] = (temperature >> 8) & 0xFF;
+    payload[payload_idx++] = temperature & 0xFF;
+    payload[payload_idx++] = (hum >> 8) & 0xFF;
+    payload[payload_idx++] = hum & 0xFF;
+    payload[payload_idx++] = (pressure >> 24) & 0xFF;
+    payload[payload_idx++] = (pressure >> 16) & 0xFF;
+    payload[payload_idx++] = (pressure >> 8) & 0xFF;
+    payload[payload_idx++] = pressure & 0xFF;
+
+    // TODO: Add CRC16
+
+    mqtt_task_pusblish("/sensor/bme680/data", (const char *) payload, PAYLOAD_SIZE);
 }
 
 /*!
@@ -210,12 +269,13 @@ void task_bme680_func(void *pvParameters)
     }
 
     printf("Success init bsec iot\r\n");
-    bsec_iot_loop(delay_us, get_timestamp, output_ready, state_save, 10000);
+    bsec_iot_loop(delay_us, get_timestamp, output_ready_pusblish, state_save, 10000);
 }
 
 void create_task_bme680(void *pvParameters)
 {
     ESP_LOGI(TAG, "Create Task BME680");
+    esp_read_mac(payload, ESP_MAC_WIFI_STA);
     xTaskCreate(task_bme680_func,
                 "Task Bme680",
                 BME680_TASK_STK_SIZE,

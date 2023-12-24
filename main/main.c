@@ -20,6 +20,7 @@
 #include "net_interface.h"
 #include "bme68x/bme68x.h"
 #include "task_bme680.h"
+#include "task_mqtt.h"
 
 #define TAG "main"
 
@@ -61,6 +62,18 @@ void app_main(void)
     memset(&bme680_dev, 0, sizeof(bme68x_t));
     memset(&i2c_dev, 0, sizeof(i2c_dev));
 
+    ESP_LOGI(TAG, "[APP] Startup..");
+    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
+    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+
+    // esp_log_level_set("*", ESP_LOG_INFO);
+    // esp_log_level_set("mqtt_client", ESP_LOG_VERBOSE);
+    // esp_log_level_set("task mqtt", ESP_LOG_VERBOSE);
+    // esp_log_level_set("TRANSPORT_BASE", ESP_LOG_VERBOSE);
+    // esp_log_level_set("esp-tls", ESP_LOG_VERBOSE);
+    // esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
+    // esp_log_level_set("outbox", ESP_LOG_VERBOSE);
+
     if (initialize_nvs() != ESP_OK || mount_flash_partition() != ESP_OK)
     {
         while (1)
@@ -70,11 +83,11 @@ void app_main(void)
     }
     
     platform_init("esp32s3", get_timestamp, delay_ms, printf);
+    net_iface_wifi_init();
+    mqtt_task_start();
     i2c_master_init(bme680_i2c_port);
     device_init(&i2c_dev, i2c_master_receive, i2c_master_transmit, &bme680_i2c_port, &bme680_addr);
     bme68x_interface_init(&bme680_dev, &i2c_dev, I2C);
-    net_iface_wifi_init();
-
     create_task_bme680(&bme680_dev);
 
     while(1){

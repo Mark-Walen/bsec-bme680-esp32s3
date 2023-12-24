@@ -408,7 +408,11 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # BME680 Configuration
 #
-CONFIG_ESP_WIFI_SSID="nova 9 pro"
+
+#
+# WIFI Configuration
+#
+CONFIG_ESP_WIFI_SSID="nova 9 Pro"
 CONFIG_ESP_WIFI_PASSWORD="Walen1108@$"
 CONFIG_ESP_MAXIMUM_RETRY=5
 # CONFIG_ESP_WIFI_AUTH_OPEN is not set
@@ -419,6 +423,13 @@ CONFIG_ESP_WIFI_AUTH_WPA2_PSK=y
 # CONFIG_ESP_WIFI_AUTH_WPA3_PSK is not set
 # CONFIG_ESP_WIFI_AUTH_WPA2_WPA3_PSK is not set
 # CONFIG_ESP_WIFI_AUTH_WAPI_PSK is not set
+# end of WIFI Configuration
+
+#
+# MQTT Configuration
+#
+CONFIG_BROKER_URL="mqtt://mqtt.eclipseprojects.io"
+# end of MQTT Configuration
 # end of BME680 Configuration
 
 #
