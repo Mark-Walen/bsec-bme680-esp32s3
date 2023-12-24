@@ -12,7 +12,6 @@
 #define TAG "BME680"
 
 static TaskHandle_t *task_bme680_handle = NULL;
-static wl_handle_t wlHandle = WL_INVALID_HANDLE;
 static char *filename_state = "/bme680/bsec_iaq.state";
 
 char *get_version(void)
@@ -23,21 +22,6 @@ char *get_version(void)
     snprintf(buffer, 16, "%d.%d.%d.%d", bsec_version.major, bsec_version.minor,
              bsec_version.major_bugfix, bsec_version.minor_bugfix);
     return buffer;
-}
-
-static esp_err_t mount_flash_partition(void){
-    const esp_vfs_fat_mount_config_t mount_config = {
-        .max_files = 4,
-        .format_if_mount_failed = true,
-        .allocation_unit_size = CONFIG_WL_SECTOR_SIZE
-    };
-    esp_err_t err = esp_vfs_fat_spiflash_mount_rw_wl("/bme680", "storage", &mount_config, &wlHandle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Mount FatFS Failed. Mount name error: %s", esp_err_to_name(err));
-        return err;
-    }
-    ESP_LOGI(TAG, "Mount Success");
-    return ESP_OK;
 }
 
 /*
@@ -184,15 +168,7 @@ uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
 }
 
 void task_bme680_func(void *pvParameters)
-{
-    if (mount_flash_partition() != ESP_OK)
-    {
-        while (1)
-        {
-            vTaskDelay(pdMS_TO_TICKS(500));
-        }
-    }
-    
+{    
     printf("bsec lib ver%s\n", get_version());
     return_values_init ret;
     bme68x_t bme680_dev = *(bme68x_t *) pvParameters;
