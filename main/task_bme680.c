@@ -12,6 +12,8 @@
 #include "esp32_s3_driver.h"
 #include "task_bme680.h"
 #include "task_mqtt.h"
+#include "struct/struct.h"
+#include "crc/crc16.h"
 
 #define PAYLOAD_SIZE            35
 #define PAYLOAD_START_IDX       6
@@ -66,6 +68,8 @@ void output_ready_pusblish(int64_t timestamp, float iaq, uint8_t iaq_accuracy, f
                   float raw_pressure, float raw_temp, float temp, float raw_humidity, float humidity, float raw_gas, float gas_percentage,
                   float stabilization_status, float run_in_status, bsec_library_return_t bsec_status)
 {
+    uint16_t crc;
+    int64_t timestamp_ms = timestamp / 1000000;
     uint16_t uiaq = iaq * 100;
     uint16_t siaq = static_iaq * 100;
     uint32_t co2 = co2_equivalent * 100;
@@ -75,42 +79,16 @@ void output_ready_pusblish(int64_t timestamp, float iaq, uint8_t iaq_accuracy, f
     uint32_t pressure = raw_pressure;
     uint8_t payload_idx = PAYLOAD_START_IDX;
     uint8_t data_len = PAYLOAD_SIZE - PAYLOAD_START_IDX;
+    uint8_t *ppayload = payload;
     
     memset(payload + payload_idx, 0, data_len);
-    payload[payload_idx] = data_len;
-    
-    payload[payload_idx++] = (timestamp >> 56) & 0xFF;
-    payload[payload_idx++] = (timestamp >> 48) & 0xFF;
-    payload[payload_idx++] = (timestamp >> 40) & 0xFF;
-    payload[payload_idx++] = (timestamp >> 32) & 0xFF;
-    payload[payload_idx++] = (timestamp >> 24) & 0xFF;
-    payload[payload_idx++] = (timestamp >> 16) & 0xFF;
-    payload[payload_idx++] = (timestamp >> 8) & 0xFF;
-    payload[payload_idx++] = timestamp & 0xFF;
 
-    payload[payload_idx++] = iaq_accuracy;
-    payload[payload_idx++] = (uiaq >> 8) & 0xFF;
-    payload[payload_idx++] = uiaq & 0xFF;
-    payload[payload_idx++] = (siaq >> 8) & 0xFF;
-    payload[payload_idx++] = siaq & 0xFF;
+    struct_pack_into(payload_idx, ppayload, "!BqB2HIB2HI", data_len, timestamp_ms, iaq_accuracy, uiaq, siaq, co2, voc, temperature, hum, pressure);
 
-    payload[payload_idx++] = (co2 >> 24) & 0xFF;
-    payload[payload_idx++] = (co2 >> 16) & 0xFF;
-    payload[payload_idx++] = (co2 >> 8) & 0xFF;
-    payload[payload_idx++] = co2 & 0xFF;
-    payload[payload_idx++] = voc;
-
-    payload[payload_idx++] = (temperature >> 8) & 0xFF;
-    payload[payload_idx++] = temperature & 0xFF;
-    payload[payload_idx++] = (hum >> 8) & 0xFF;
-    payload[payload_idx++] = hum & 0xFF;
-    payload[payload_idx++] = (pressure >> 24) & 0xFF;
-    payload[payload_idx++] = (pressure >> 16) & 0xFF;
-    payload[payload_idx++] = (pressure >> 8) & 0xFF;
-    payload[payload_idx++] = pressure & 0xFF;
-
-    // TODO: Add CRC16
-
+    crc = crc16_calculate(payload, PAYLOAD_SIZE - 2);
+    // ppayload = payload;
+    struct_pack_into(PAYLOAD_SIZE - 2, ppayload, "!H", crc);
+    ppayload = NULL;
     mqtt_task_pusblish("/sensor/bme680/data", (const char *) payload, PAYLOAD_SIZE);
 }
 
