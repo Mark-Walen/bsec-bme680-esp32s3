@@ -84,9 +84,9 @@ void app_main(void)
         }
     }
     
-    platform_init("esp32s3", get_timestamp, delay_ms, printf);
+    platform_init("esp32s3", get_timestamp, drv_delay_us, printf);
     s_event_group = xEventGroupCreate();
-    
+
     net_iface_wifi_init();
     mqtt_task_start();
     i2c_master_init(bme680_i2c_port);

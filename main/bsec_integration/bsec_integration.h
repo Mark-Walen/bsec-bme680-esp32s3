@@ -95,7 +95,7 @@ extern "C"
 /**********************************************************************************************************************/
 
 /* function pointer to the system specific sleep function */
-typedef void (*sleep_fct)(uint32_t t_us,void *intf_ptr);
+typedef void (*sleep_fct)(uint32_t t_us);
 
 /* function pointer to the system specific timestamp derivation function */
 typedef int64_t (*get_timestamp_us_fct)();

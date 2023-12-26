@@ -555,7 +555,7 @@ void bsec_iot_loop(sleep_fct sleep_n, get_timestamp_us_fct get_timestamp_us, out
 {
     /* Timestamp variables */
     int64_t time_stamp = 0;
-	uint32_t tick_before, tick_after;
+	// uint32_t tick_before, tick_after;
     
     /* BSEC sensor settings struct */
     bsec_bme_settings_t sensor_settings;
@@ -576,10 +576,8 @@ void bsec_iot_loop(sleep_fct sleep_n, get_timestamp_us_fct get_timestamp_us, out
 	
     while (1)
     {
-    	tick_before = get_timestamp();
         /* get the timestamp in nanoseconds before calling bsec_sensor_control() */
         // time_stamp = get_timestamp_us() * 1000;
-        time_stamp = get_timestamp_us() * 1000;
 		if (time_stamp >= sensor_settings.next_call)
 		{
             printf("time stamp: %" PRId64 " next call: %" PRId64 "\r\n", time_stamp, sensor_settings.next_call);
@@ -656,8 +654,8 @@ void bsec_iot_loop(sleep_fct sleep_n, get_timestamp_us_fct get_timestamp_us, out
 				n_samples = 0;
 			}
 		}
-		tick_after = get_timestamp();
-		printf("cost %u ms\r\n", (tick_after - tick_before)/1000);
+        time_stamp = get_timestamp_us() * 1000;
+        sleep_n((sensor_settings.next_call - time_stamp) / 1000000);
 	}
 }
 
