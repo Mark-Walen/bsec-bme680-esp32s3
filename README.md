@@ -36,7 +36,6 @@ Step-by-step instructions on how to install and set up your project using Visual
 4. Clone the repository: `git clone https://github.com/Mark-Walen/bsec-bme680-esp32s3 --recursive` .
 5. Open the project in Visual Studio Code.
 6. Build and flash the code to your ESP32-S3.
-7. Flash
 
 
 ## Usage
@@ -50,7 +49,7 @@ Step-by-step instructions on how to install and set up your project using Visual
 
 ## Configuration
 
-![image-20231226170550136](D:\git\esp32-s3\bsec-bme680-esp32\img\project_config.png)
+![image-20231226170550136](./img/project_config.png)
 
 Use ESP-IDF Terminal to config WiFi SSID m, WiFi Password and MQTT Broker URI.
 
