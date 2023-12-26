@@ -36,7 +36,6 @@ Step-by-step instructions on how to install and set up your project using Visual
 4. Clone the repository: `git clone https://github.com/Mark-Walen/bsec-bme680-esp32s3 --recursive` .
 5. Open the project in Visual Studio Code.
 6. Build and flash the code to your ESP32-S3.
-7. Flash
 
 
 ## Usage
