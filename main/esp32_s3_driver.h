@@ -15,7 +15,7 @@
 #define I2C_MASTER_TIMEOUT_MS       1000
 
 PLATFORM_TICK_COUNT_TYPE get_timestamp(void);
-void delay_us(uint32_t period, void *intf_ptr);
+void drv_delay_us(uint32_t period);
 void delay_ms(uint32_t period);
 void gpio_init(void);
 int gpio_write(uint8_t *level, uint32_t length, void *fp, void *addr);

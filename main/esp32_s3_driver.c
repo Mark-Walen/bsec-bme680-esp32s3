@@ -22,7 +22,7 @@ static __inline void delay_clock(uint32_t ts)
     }while (curr - start <= ts);
 }
  
-void delay_us(uint32_t us, void *intf_ptr)
+void drv_delay_us(uint32_t us)
 {
     while (us--)
     {
@@ -61,9 +61,6 @@ int gpio_read(uint8_t *reg_data, uint32_t length, void *fp, void *addr)
 
     return 0;
 }
-
-void gpio_init()
-{}
 
 int i2c_master_init(i2c_port_t i2c_master_port) {
     i2c_config_t conf = {
