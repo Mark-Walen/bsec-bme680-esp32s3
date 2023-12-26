@@ -21,11 +21,13 @@
 #include "bme68x/bme68x.h"
 #include "task_bme680.h"
 #include "task_mqtt.h"
+#include "events_def.h"
 
 #define TAG "main"
 
 static bme68x_t bme680_dev;
 static device_t i2c_dev;
+EventGroupHandle_t s_event_group;
 static wl_handle_t wlHandle = WL_INVALID_HANDLE;
 
 static esp_err_t initialize_nvs(void)
@@ -83,6 +85,8 @@ void app_main(void)
     }
     
     platform_init("esp32s3", get_timestamp, delay_ms, printf);
+    s_event_group = xEventGroupCreate();
+    
     net_iface_wifi_init();
     mqtt_task_start();
     i2c_master_init(bme680_i2c_port);

@@ -35,11 +35,6 @@ PLATFORM_TICK_COUNT_TYPE get_timestamp(void)
     return esp_timer_get_time();
 }
 
-PLATFORM_TICK_COUNT_TYPE get_time_us(void)
-{
-    return esp_timer_get_time()*1000;
-}
-
 void delay_ms(uint32_t period)
 {
     vTaskDelay(pdMS_TO_TICKS(period));

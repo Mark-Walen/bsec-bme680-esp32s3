@@ -16,6 +16,7 @@
 #include "mqtt_client.h"
 
 #include "task_mqtt.h"
+#include "events_def.h"
 
 static const char *TAG = "task mqtt";
 static esp_mqtt_client_handle_t client;

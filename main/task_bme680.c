@@ -1,10 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "esp_vfs.h"
 #include "esp_vfs_fat.h"
 #include "esp_system.h"
 #include "esp_mac.h"
 #include "esp_log.h"
 
-#include "basic.h"
+#include "bsec_datatypes.h"
+#include "bsec_interface.h"
 #include "bsec_integration.h"
 #include "bme68x/bme68x.h"
 #include "bsec_iaq.h"
