@@ -252,7 +252,7 @@ void task_bme680_func(void *pvParameters)
     }
 
     printf("Success init bsec iot\r\n");
-    bsec_iot_loop(delay_us, get_timestamp, output_ready_pusblish, state_save, 10000);
+    bsec_iot_loop(delay_ms, get_timestamp, output_ready_pusblish, state_save, 10000);
 }
 
 void create_task_bme680(void *pvParameters)

@@ -655,7 +655,7 @@ void bsec_iot_loop(sleep_fct sleep_n, get_timestamp_us_fct get_timestamp_us, out
 			}
 		}
         time_stamp = get_timestamp_us() * 1000;
-        sleep_n((sensor_settings.next_call - time_stamp) / 1000000);
+        sleep_n((sensor_settings.next_call - time_stamp) / 1000000); // delay_ms is used for yield cpu control. free-rtos do not support us delay.
 	}
 }
 
