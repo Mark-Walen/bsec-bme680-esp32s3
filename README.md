@@ -49,7 +49,7 @@ Step-by-step instructions on how to install and set up your project using Visual
 
 ## Configuration
 
-![image-20231226170550136](D:\git\esp32-s3\bsec-bme680-esp32\img\project_config.png)
+![image-20231226170550136](./img/project_config.png)
 
 Use ESP-IDF Terminal to config WiFi SSID m, WiFi Password and MQTT Broker URI.
 
