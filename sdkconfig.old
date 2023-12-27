@@ -408,6 +408,8 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # BME680 Configuration
 #
+# CONFIG_BME680_IAQ_33V_3S_4D is not set
+CONFIG_BME680_IAQ_33V_300S_4D=y
 
 #
 # WIFI Configuration
@@ -428,7 +430,7 @@ CONFIG_ESP_WIFI_AUTH_WPA2_PSK=y
 #
 # MQTT Configuration
 #
-CONFIG_BROKER_URL="mqtt://mqtt.eclipseprojects.io"
+CONFIG_BROKER_URL="mqtt://vlue.tech"
 # end of MQTT Configuration
 # end of BME680 Configuration
 

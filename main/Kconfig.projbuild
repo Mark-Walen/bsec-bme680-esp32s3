@@ -1,4 +1,18 @@
 menu "BME680 Configuration"
+        
+    choice BME680_IAQ_CONFIG
+        prompt "Select BME680 iaq configuration"
+        default BME680_IAQ_33V_3S_4D
+
+        config BME680_IAQ_33V_3S_4D
+            bool  "BME680_IAQ_33v_3s_4d"
+            help
+                MAX data sample rate 3s, calibration time 4 days
+        config BME680_IAQ_33V_300S_4D
+            bool  "BME680_IAQ_33v_300s_4d"
+            help
+                MAX data sample rate 300s, calibration time 4 days
+    endchoice
 
     menu "WIFI Configuration"
         config ESP_WIFI_SSID

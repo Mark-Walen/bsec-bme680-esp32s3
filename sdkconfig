@@ -408,6 +408,8 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # BME680 Configuration
 #
+# CONFIG_BME680_IAQ_33V_3S_4D is not set
+CONFIG_BME680_IAQ_33V_300S_4D=y
 
 #
 # WIFI Configuration

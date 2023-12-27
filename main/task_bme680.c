@@ -205,8 +205,8 @@ uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
     // otherwise return length of loaded config string.
     // ...
     // int32_t rslt = 0;
-    memcpy(config_buffer, bsec_config_iaq, BSEC_CONFIG_LEN);
-    return BSEC_CONFIG_LEN;
+    memcpy(config_buffer, bsec_config_iaq, n_buffer);
+    return n_buffer;
 }
 
 void task_bme680_func(void *pvParameters)
@@ -233,7 +233,11 @@ void task_bme680_func(void *pvParameters)
 
     /* Call to the function which initializes the BSEC library
      * Switch on low-power mode and provide no temperature offset */
+#if CONFIG_BME680_IAQ_33V_300S_4D
+    ret = bsec_iot_init(sensor_list, 13, BSEC_SAMPLE_RATE_ULP, 0.0f, state_load, config_load, bme680_dev);
+#else
     ret = bsec_iot_init(sensor_list, 13, BSEC_SAMPLE_RATE_LP, 0.0f, state_load, config_load, bme680_dev);
+#endif
     if (ret.bme68x_status)
     {
         /* Could not intialize BME68x */

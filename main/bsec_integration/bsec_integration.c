@@ -577,7 +577,6 @@ void bsec_iot_loop(sleep_fct sleep_n, get_timestamp_us_fct get_timestamp_us, out
     while (1)
     {
         /* get the timestamp in nanoseconds before calling bsec_sensor_control() */
-        // time_stamp = get_timestamp_us() * 1000;
 		if (time_stamp >= sensor_settings.next_call)
 		{
             printf("time stamp: %" PRId64 " next call: %" PRId64 "\r\n", time_stamp, sensor_settings.next_call);
